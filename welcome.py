@@ -3,23 +3,29 @@ from utils import read_disclaimer
 
 st.set_page_config(page_title="MamaMind", page_icon=":male-doctor:")
 
+# Apply custom CSS
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("styles.css")
+
 st.markdown("<div style='text-align: center; font-size: 32px; font-weight: bold;'>👨‍⚕️ MamaMind</div>", unsafe_allow_html=True)
 st.markdown("<div style='text-align: center; font-size: 24px;'>Gentle Guidance for New Beginnings</div", unsafe_allow_html=True)
 st.divider()
 
 st.subheader("About the application")
-st.markdown("""
-    This application helps the people with perinatal depression.
-    "Chat with me" is a chat with a AI mental health advisor which is designed to provide the advice 
-    using Cognitive Behavioral Therapy (CBT). It is a conversational chatbot designed to be friendly and assess 
-    the level of depression using the Edinburgh Prenatal/Postpartum Depression score and provide the advice accordingly.
-    The user can choose whether to provide the answers to the EPDS questionnaire. Or choose to simply chat with the advisor. 
-""")
+st.markdown("""<div style='text-align: justify;'>
+    As a gentle guidance companion, MamaMind is here to support you through the ups and downs of motherhood, 
+    providing a safe and non-judgmental space to explore your emotions and concerns. Our app is designed specifically for expecting and new mothers, offering personalized mental health recommendations 
+    based on cognitive behavioral therapy and knowledge from research articles from PubMed on perinatal depression. We also assess the severity of perinatal depression using the 
+    Edinburgh Depression Scale, ensuring our responses are tailored to your unique needs. </div>""", unsafe_allow_html=True)
 
+st.divider()
 
 # Display disclaimer
 # File path to the disclaimer markdown file
 disclaimer_file_path = 'static/disclaimer.md'
 disclaimer_text = read_disclaimer(disclaimer_file_path)
 st.subheader("Disclaimer")
-st.markdown(disclaimer_text)
+st.markdown(f"<div style='text-align: justify;'>{disclaimer_text}</div>", unsafe_allow_html=True)

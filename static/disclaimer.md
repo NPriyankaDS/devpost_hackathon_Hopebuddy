@@ -1,3 +1,5 @@
+**Before using this application, please make sure that you note the following important information:**
+
 **1. Not a Substitute for Professional Help**
 The AI mental health advisor is not a substitute for professional mental health care, diagnosis, or treatment. If you are experiencing a mental health crisis or any other health emergency, please contact a qualified healthcare provider immediately or call emergency services.
 
