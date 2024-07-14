@@ -4,6 +4,7 @@ import json
 from dotenv import load_dotenv
 import streamlit as st
 from utils import *
+from textwrap import dedent
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -33,18 +34,24 @@ local_css("styles.css")
 # Define constants
 DATA_PATH = 'data/'
 DB_FAISS_PATH = 'vectorstore/db_faiss'
-SYSTEM_PROMPT = (
-    "You are a mental health adviser. You should use your knowledge of cognitive behavioral therapy, "
-    "meditation techniques, mindfulness practices, and other therapeutic methods to guide the user through "
-    "their feelings and improve their well-being. "
-    "You are a conversational assistant that helps users by asking them questions one by one based on the {input} or the {input} and {severity} provided. "
-    "Answer the user's questions succinctly and provide practical advice. "
-    "Use the given {context} to answer the question. If you don't know the answer, say you don't know. "
-    "After addressing the user's question, ask a relevant follow-up question to continue the conversation if necessary. "
-    "If the user's conversation ends with either thank you, thanks, bye, or goodbye, end the conversation in a friendly manner or say 'I hope this helps. If you have more questions, feel free to ask!' "
+SYSTEM_PROMPT = dedent("""
+    You are a mental health adviser. You should use your knowledge of cognitive behavioral therapy,
+    meditation techniques, mindfulness practices, and other therapeutic methods to guide the user through 
+    their feelings and improve their well-being. 
+    You will respond to the user's questions based on the {input}, {severity} of their perinatal depression.
+
+    * For mild severity, offer supportive advice and practical coping strategies.
+    * For moderate severity, provide empathetic responses and suggest helpful resources.
+    * For severe severity, advise the user to seek professional help and share urgent resources.
+    After addressing the user's question, include a relevant follow-up question only if it feels natural to continue the conversation. 
+    Avoid overwhelming the user with too many questions.
+
+    If the conversation ends with 'thank you,' 'thanks,' 'bye,' or 'goodbye,' conclude in a friendly manner with: 
+    'I hope this helps. If you have more questions, feel free to ask!'
     
     "Context: {context}"
     "Input: {input},{severity}"
+    """
 )
 
 # Function to load questions from the JSON file
@@ -95,8 +102,8 @@ def interpret_epds_score(score):
 def begin_chat(llm, severity):
     with st.chat_message("assistant"):
         st.write("How can I help you?")
-
-    query = st.text_input("Tell me about your problems")
+    
+    query = st.chat_input("Tell me about your problems")
 
     if query:
         if os.path.exists(DB_FAISS_PATH):
@@ -104,7 +111,7 @@ def begin_chat(llm, severity):
             context = " ".join(context_docs.page_content)
             with col2:
                 st.write("RAG output")
-                st.markdown(context_docs.page_content)
+                # st.markdown(context_docs.page_content)
                 st.markdown(context_docs.metadata)
         else:
             directory = './data'
@@ -208,12 +215,11 @@ def main():
                 else:
                     st.session_state.question_index = 'completed'
 
-
             # Ask if the user wants to start the questionnaire
             if not st.session_state.started:
                 with st.chat_message("assistant"):
                     # st.write("To assess the level of severity of the depression, we would like you to answer the Ediburgh Depression questionnaire.")
-                    start = st.radio("Would you like to answer the EPDS questionnaire?", ("Yes", "No"), index=None, horizontal=True)
+                    start = st.radio("Would you like to answer the EPDS questionnaire?", ("Yes", "No"), index=None, horizontal=True, key='start_radio')
                 #st.write("Start: ", start)
                 if start == "Yes":
                     st.session_state.started = True
@@ -224,6 +230,7 @@ def main():
                 elif start == "No":
                     st.session_state.started = False
                     severity = "None"
+                    
                     st.write("Thank you for your time. Ask any questions you have to MamaMind 🙂.")
                     begin_chat(llm, severity)
             else:
@@ -234,6 +241,10 @@ def main():
                         st.write("You have completed the EPDS questionnaire.")
                     epds_score = sum(st.session_state.scores)
                     severity = interpret_epds_score(epds_score)
+                    answer = llm.invoke(severity)
+                    with st.chat_message('assistant'):
+                        st.write(answer.content)
+    
                     begin_chat(llm, severity)
                     # st.write("Your total score:", epds_score)
                     # st.write("Severity:", severity)

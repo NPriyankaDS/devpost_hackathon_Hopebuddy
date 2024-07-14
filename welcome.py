@@ -22,10 +22,10 @@ st.write("""<div style='text-align: center; font-size: 20px;'>
     and we're here to provide you with the mental health support you deserve.</div""", unsafe_allow_html=True)
 st.divider()
 
-st.subheader("About the application")
+st.subheader("About")
 st.markdown("""<div style='text-align: justify;'>
     As a gentle guidance companion, MamaMind is here to support you through the ups and downs of motherhood, 
-    providing a safe and non-judgmental space to explore your emotions and concerns. Our app is designed specifically for expecting and new mothers, offering personalized mental health recommendations 
+    providing a safe and non-judgmental space to explore your emotions and concerns. Our chatbot application is designed specifically for expecting and new mothers, offering personalized mental health recommendations 
     based on cognitive behavioral therapy and knowledge from research articles from PubMed on perinatal depression. We also assess the severity of perinatal depression using the 
     Edinburgh Depression Scale, ensuring our responses are tailored to your unique needs. </div>""", unsafe_allow_html=True)
 
@@ -39,5 +39,5 @@ st.subheader("Disclaimer")
 st.markdown(f"<div style='text-align: justify;'>{disclaimer_text}</div>", unsafe_allow_html=True)
 
 st.divider()
-st.markdown("<div style='text-align: center; font-size: 20px;'>Created with 💖 by team 'MamaMind'</div>", unsafe_allow_html=True)
-st.markdown("<div style='text-align: center; font-size: 20px;'>Contributed by Foutse, Priyanka N, Rahul Menon and Vaishnavi Mudaliar</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; font-size: 20px;'>Created with 💖 from the team of 'MamaMind'</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; font-size: 20px;'>Contributed and Developed by Foutse, Priyanka N, Rahul Menon and Vaishnavi Mudaliar</div>", unsafe_allow_html=True)
