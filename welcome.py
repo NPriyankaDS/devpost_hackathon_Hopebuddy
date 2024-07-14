@@ -1,7 +1,7 @@
 import streamlit as st
 from utils import read_disclaimer
 
-st.set_page_config(page_title="MamaMind", page_icon=":male-doctor:")
+st.set_page_config(page_title="MamaMind", page_icon=":female-doctor:")
 
 # Apply custom CSS
 def local_css(file_name):
@@ -10,8 +10,16 @@ def local_css(file_name):
 
 local_css("styles.css")
 
-st.markdown("<div style='text-align: center; font-size: 32px; font-weight: bold;'>👨‍⚕️ MamaMind</div>", unsafe_allow_html=True)
+logo_path = "static/image1-removebg-preview.png"
+st.image(logo_path, width=150)
+
+st.markdown("<div style='text-align: center; font-size: 32px; font-weight: bold;'>👩‍⚕️ MamaMind</div>".format(logo_path), unsafe_allow_html=True)
 st.markdown("<div style='text-align: center; font-size: 24px;'>Gentle Guidance for New Beginnings</div", unsafe_allow_html=True)
+st.divider()
+st.write("""<div style='text-align: center; font-size: 20px;'>
+    Hello and welcome to MamaMind, your supportive companion through the journey of motherhood. 
+    We understand that pregnancy and the postpartum period can be filled with a mix of emotions, 
+    and we're here to provide you with the mental health support you deserve.</div""", unsafe_allow_html=True)
 st.divider()
 
 st.subheader("About the application")
@@ -29,3 +37,7 @@ disclaimer_file_path = 'static/disclaimer.md'
 disclaimer_text = read_disclaimer(disclaimer_file_path)
 st.subheader("Disclaimer")
 st.markdown(f"<div style='text-align: justify;'>{disclaimer_text}</div>", unsafe_allow_html=True)
+
+st.divider()
+st.markdown("<div style='text-align: center; font-size: 20px;'>Created with 💖 by team 'MamaMind'</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; font-size: 20px;'>Contributed by Foutse, Priyanka N, Rahul Menon and Vaishnavi Mudaliar</div>", unsafe_allow_html=True)
