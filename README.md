@@ -1,2 +1,2 @@
-# devpost_hackathon_Hopebuddy
+# devpost_hackathon_MamaMind
 
