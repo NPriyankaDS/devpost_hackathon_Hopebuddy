@@ -108,15 +108,6 @@ networkx
 numpy
 oauthlib
 onnxruntime
-opentelemetry-api
-opentelemetry-exporter-otlp-proto-common
-opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-instrumentation-asgib0
-opentelemetry-instrumentation-fastapib0
-opentelemetry-proto
-opentelemetry-sdk
-opentelemetry-semantic-conventionsb0
-opentelemetry-util-httpb0
 orjson
 overrides
 packaging
