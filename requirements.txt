@@ -33,7 +33,7 @@ email_validator
 entrypoints
 eutils
 executing
-faiss-cpu.post1
+faiss-cpu
 Faker
 fastapi
 fastapi-cli
