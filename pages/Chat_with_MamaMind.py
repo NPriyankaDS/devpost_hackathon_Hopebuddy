@@ -174,6 +174,9 @@ def main():
                 begin_chat(llm, retriever, severity)
             else:
                 current_question = epds_questions[st.session_state.question_index]
+                st.write("Click on the options that comes closest to how you have felt IN THE PAST 7 DAYS—not just how you feel today.\
+                        Complete all 10 questions.\n\
+                        Kindly Note: This is a screening test; not a medical diagnosis.")
                 with st.chat_message("assistant"):
                     st.write(current_question["question"])
                     response = st.radio("Select your response:", current_question["options"], index=None, horizontal=False)
