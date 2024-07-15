@@ -19,10 +19,6 @@ local_css("styles.css")
 # Folder path
 FAISS_DB_PATH = './vectorstore'
 
-# Load Vector store DB & Retriever
-vectorstore = load_vector_db(FAISS_DB_PATH)
-retriever = vectorstore.as_retriever(search_kwargs={'k':3})
-
 # Function to     
 def display_welcome_message(llm):
     prompt = """
@@ -60,40 +56,43 @@ def interpret_epds_score(score):
     else:
         return "Severe depression"
 
-def begin_chat(llm, severity):
+def begin_chat(llm, retriever, severity):
     with st.chat_message("assistant"):
-        text = 'How can I help you?'
-        st.write(text)
-        st.session_state.chat_history.append(AIMessage(text))
+        st.write('How can I help you?')
+
+    # Display chat_history
+    for message in st.session_state.chat_history:
+        if isinstance(message, HumanMessage):
+            with st.chat_message("user"):
+                st.markdown(message.content)
+        else:
+            with st.chat_message("assistant"):
+                st.markdown(message.content)
     
     query = st.chat_input("Tell me about your problems")
 
-    if query is not None and query != "":       
+    if query is not None and query != "":
+        # Display the query
+        with st.chat_message('user') :
+            st.markdown(query)
+            
         # Decompose the question
-        decomposed_questions = decompose_prompt(query)
+        decomposed_questions = decompose_prompt(query, llm)
 
         # Get response
-        answer = retrieve_and_generate(decomposed_questions, retriever, llm, severity)
+        with st.chat_message('assistant'):
+            answer = st.write_stream(retrieve_and_generate(decomposed_questions, retriever, llm, chat_history=st.session_state.chat_history, severity=severity))
 
         # Append to chat history
         st.session_state.chat_history.append(HumanMessage(query))
         st.session_state.chat_history.append(AIMessage(answer))
-
-        # Display messages
-        for message in st.session_state.chat_history:
-            if isinstance(message, HumanMessage):
-                with st.chat_message("user"):
-                    st.markdown(message.content)
-            else:
-                with st.chat_message("assistant"):
-                    st.markdown(message.content)
 
 def main():    
     
     # Get user's Groq api key
     with st.sidebar:
         groq_api_key = st.text_input(label = "**Groq API key**", placeholder="Ex gsk-2twmA8tfCb8un4...",
-        key ="groq_api_key_input", help = "How to get a Groq api key: Visit https://console.groq.com/login")
+        key ="groq_api_key_input", help = "How to get a Groq api key: Visit https://console.groq.com/login", type="password")
 
         # Initialize session state for the model if it doesn't already exist
         if 'selected_model' not in st.session_state:
@@ -101,7 +100,7 @@ def main():
         # Container for markdown text
         with st.container():
             st.markdown("Make sure you have entered your API key")
-            model_chosen = st.selectbox("Choose the model", ("llama3-70b-8192","gemma2-9b-it"), key="tab2_sidebar_selectbox", index=None)
+            model_chosen = st.selectbox("Choose the model", ("llama3-70b-8192","mixtral-8x7b-32768"), key="tab2_sidebar_selectbox", index=None)
             st.session_state['selected_model'] = model_chosen
     
     st.markdown("<div style='text-align: center; font-size: 32px; font-weight: bold;'>👩‍⚕️ MamaMind</div>", unsafe_allow_html=True)
@@ -114,6 +113,10 @@ def main():
 
         # Load the EPDS questionnaire
         epds_questions = load_questions('static/epds_questions.json')
+
+        # Load Vector store DB & Retriever
+        vectorstore = load_vector_db(FAISS_DB_PATH)
+        retriever = vectorstore.as_retriever(search_kwargs={'k':3})
 
         # Initialize session state for messages
         if "chat_history" not in st.session_state:
@@ -150,25 +153,25 @@ def main():
         if not st.session_state.started:
             with st.chat_message("assistant"):
                 start = st.radio("Would you like to answer the EPDS questionnaire?", ("Yes", "No"), index=None, horizontal=True, key='start_radio')
-                if start == "Yes":                    
-                    st.session_state.started = True
-                    st.session_state.question_index = 0
-                    st.session_state.responses = []
-                    st.session_state.scores = []
-                    st.rerun()
-                elif start == "No":
-                    st.session_state.started = False
-                    severity = "Not provided"
-                    
-                    st.write("Thank you for your time. Ask any questions you have to MamaMind 🙂.")
-                    begin_chat(llm, severity)
+            if start == "Yes":                    
+                st.session_state.started = True
+                st.session_state.question_index = 0
+                st.session_state.responses = []
+                st.session_state.scores = []
+                st.rerun()
+            elif start == "No":
+                st.session_state.started = False
+                severity = "Not provided"
+                with st.chat_message('assistant'):
+                    st.write("No problem. Please ask any questions you have to MamaMind 🙂.")
+                begin_chat(llm, retriever, severity)
         else:
             if st.session_state.question_index == 'completed':
                 with st.chat_message('assistant'):
                     st.write("You have completed the EPDS questionnaire.")
                 epds_score = sum(st.session_state.scores)
                 severity = interpret_epds_score(epds_score)
-                begin_chat(llm, severity)
+                begin_chat(llm, retriever, severity)
             else:
                 current_question = epds_questions[st.session_state.question_index]
                 with st.chat_message("assistant"):

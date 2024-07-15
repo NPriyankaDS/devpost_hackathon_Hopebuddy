@@ -44,7 +44,6 @@ def decompose_prompt(prompt, llm):
     prompt_template = ChatPromptTemplate.from_template(template)
     decomposition_chain = (prompt_template | llm | StrOutputParser() | (lambda x: x.split('\n')))
     questions = decomposition_chain.invoke({"question": prompt})
-    print(f"{questions}")
     return questions
 
 # Function to format question & answer pairs
@@ -53,7 +52,7 @@ def format_qa_pair(question, answer):
     return formatted_string
 
 # Function to retrieve relevant documents using vector-store and generating an answer
-def retrieve_and_generate(questions, retriever, llm, severity="Not provided"):
+def retrieve_and_generate(questions, retriever, llm, chat_history, severity="Not provided"):
     # Template for questions except the last one
     template_1 = """Here is the question you need to answer:
 
@@ -86,12 +85,18 @@ def retrieve_and_generate(questions, retriever, llm, severity="Not provided"):
     Severity of depression user is suffering from:
 
     \n --- \n {severity} \n --- \n
+
+    Here is the Chat history of user:
+
+    \n --- \n {chat_history} \n --- \n
     
     Instructions:
-    You are a conversational assistant that helps users by answering their queries one by one, always in a helpful tone.
-    Answer the user's questions succinctly and begin the answer with helpful & assuring sentence related the question. If you don't know the answer, say you don't know. 
-    After addressing the user's question, ask a relevant follow-up question to continue the conversation if necessary. 
-    If the user's conversation ends with either thank you, thanks, bye, or goodbye, end the conversation in a friendly manner or say 'I hope this helps. If you have more questions, feel free to ask!'
+    1. You are a conversational assistant that helps users by answering their queries one by one, always in a helpful tone.
+    2. Always use the combination of chat history, context and background question + answer pairs to answer the user's questions. 
+       You will answer from any one of these 3 sources and don't mention the source in the answer.
+    3. Always answer the user's questions succinctly and begin the answer with helpful & assuring sentence related the question. 
+    4. After addressing the user's question, ask a follow-up question about any further help the user requires. 
+    5. If the user's conversation contains either thank you, thanks, bye, goodbye or they are thanking you for the support, always end the conversation in a friendly manner or say 'I hope this helps. If you have more questions, feel free to ask!'
     
     Use the above severity, context, any background question + answer pairs and the above instructions to answer the question: \n {question}
     """
@@ -113,11 +118,12 @@ def retrieve_and_generate(questions, retriever, llm, severity="Not provided"):
     rag_chain_2 = ({"context": itemgetter("question") | retriever, 
                     "question": itemgetter("question"), 
                     "q_a_pairs": itemgetter("q_a_pairs"), 
-                    "severity": itemgetter("severity")}
+                    "severity": itemgetter("severity"), 
+                    "chat_history": itemgetter("chat_history")}
                     | prompt_template_2 | llm | StrOutputParser())
-    answer = rag_chain_2.invoke({"question": questions[-1], "q_a_pairs": q_a_pairs, "severity": severity})
+    answer_generator = rag_chain_2.stream({"question": questions[-1], "q_a_pairs": q_a_pairs, "severity": severity, "chat_history": chat_history})
     
-    return answer
+    return answer_generator
 
 # Read the disclaimer text from the markdown file
 def read_disclaimer(file_path):
