@@ -12,7 +12,7 @@ load_dotenv()
 st.set_page_config(page_title="MamaMind", page_icon=":female-doctor:")
 # col1, col2 = st.columns([3, 1])
 with st.sidebar:
-    st.image("static\image1-removebg-preview.png")
+    st.image("static/image1-removebg-preview.png")
 # Apply custom CSS
 local_css("styles.css")
 
