@@ -36,20 +36,20 @@ MamaMind aims to create a safe and supportive environment for individuals experi
 **Main Requirements:**
 Check the requirements.txt file for more information.
 
-*faiss-cpu
-*groq
-*huggingface-hub
-*langchain
-*langchain-community
-*langchain-core
-*langchain-groq
-*langchain-huggingface
-*langchain-text-splitters
-*python-dotenv
-*sentence-transformers
-*streamlit
-*streamlit-extras
-*transformers
+* faiss-cpu
+* groq
+* huggingface-hub
+* langchain
+* langchain-community
+* langchain-core
+* langchain-groq
+* langchain-huggingface
+* langchain-text-splitters
+* python-dotenv
+* sentence-transformers
+* streamlit
+* streamlit-extras
+* transformers
 
 **Installation:**
 
