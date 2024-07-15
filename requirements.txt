@@ -135,7 +135,6 @@ pypdf
 PyPika
 pyproject_hooks
 pyreadline3
-python-dateutil.post0
 python-dotenv
 python-Levenshtein
 python-multipart
