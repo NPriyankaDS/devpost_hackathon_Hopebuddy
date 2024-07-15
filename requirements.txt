@@ -111,7 +111,6 @@ onnxruntime
 opentelemetry-api
 opentelemetry-exporter-otlp-proto-common
 opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-instrumentationb0
 opentelemetry-instrumentation-asgib0
 opentelemetry-instrumentation-fastapib0
 opentelemetry-proto
