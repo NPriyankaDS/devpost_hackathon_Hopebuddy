@@ -79,7 +79,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## **Contact:**
 
-For any questions or feedback, please contact our team : nprinka235@gmail.com, rahulmenon1758@gmail.com, VaishnaviMudaliar@gmail.com or foutse-yuehgoh@gmail.com
+For any questions or feedback, please contact our team : nprinka235@gmail.com, rahulmenon1758@gmail.com, vaishnavim1311@gmail.com and foutse.yuehgoh@gmail.com.
 
 ## Link to the streamlit application
 
